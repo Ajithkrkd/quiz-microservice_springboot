@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: question-service
+          uri: lb://question-service
+          predicates:
+            - Path=/question/**
+          filters:
+            - AuthenticationFilter
+
+        - id: quiz-service
+          uri: lb://quiz-service
+          predicates:
+            -  Path=/quiz/**
+          filters:
+            - AuthenticationFilter
+
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/**
+          filters:
+            - AuthenticationFilter
+
+
+  application:
+    name: api-gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 8765
