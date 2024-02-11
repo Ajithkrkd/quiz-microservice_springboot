@@ -58,3 +58,13 @@ resilience4j:
   tracing:
     sampling:
       probability: 1.0
+
+#kafka properties
+  kafka:
+    bootstrap-servers: localhost:9092
+    template:
+      defaultTopic: "notificationTopic"
+
+    producer:
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer

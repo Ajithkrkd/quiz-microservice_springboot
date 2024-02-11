@@ -1,6 +1,7 @@
 package com.ajith.quizservice.Services;
 
 import com.ajith.quizservice.Dao.QuizDao;
+import com.ajith.quizservice.event.QuizSubmitEvent;
 import com.ajith.quizservice.feign.QuizInterface;
 import com.ajith.quizservice.model.QuestionWrapper;
 import com.ajith.quizservice.model.Quiz;
@@ -8,9 +9,11 @@ import com.ajith.quizservice.model.Response;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +23,13 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@RequiredArgsConstructor
 public class QuizService {
 
-    @Autowired
-    QuizDao quizDao;
 
-    @Autowired
-    QuizInterface quizInterface;
-
+    private final QuizDao quizDao;
+    private final QuizInterface quizInterface;
+    private final KafkaTemplate<String,QuizSubmitEvent> kafkaTemplate;
 
     public ResponseEntity <String> createQuiz(String category,  String title,int numQ) {
 
@@ -64,6 +66,7 @@ public class QuizService {
 
     public ResponseEntity<Integer> calculateResult(Integer id, List< Response > responses) {
         int right = quizInterface.getScore ( responses ).getBody ();
+        kafkaTemplate.send ( "notificationTopic" , new QuizSubmitEvent(right) );
         return new ResponseEntity<>(right, HttpStatus.OK);
     }
 
