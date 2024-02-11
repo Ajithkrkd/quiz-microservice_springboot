@@ -21,7 +21,7 @@ public interface QuestionService {
 
     ResponseEntity<List<Integer>> getQuestionsForQuiz (String categoryName, Integer numberOfQuestions);
 
-    ResponseEntity< List< QuestionWrapper>> getQuestionsById (List< Integer> questionsIds);
+    List< QuestionWrapper> getQuestionsById (List< Integer> questionsIds);
 
     ResponseEntity< Integer> getScore (List< Response> responses);
 }

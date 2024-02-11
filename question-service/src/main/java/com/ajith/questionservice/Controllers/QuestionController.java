@@ -4,15 +4,19 @@ import com.ajith.questionservice.Services.QuestionService;
 import com.ajith.questionservice.model.Question;
 import com.ajith.questionservice.model.QuestionWrapper;
 import com.ajith.questionservice.model.Response;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
 @RequestMapping("/question")
+@Slf4j
 public class QuestionController {
 
     @Autowired
@@ -43,19 +47,22 @@ public class QuestionController {
 
     //this endpoint will return the questions id with in the category for the quiz
     @GetMapping("/generate")
+
     public  ResponseEntity<List<Integer>> getQuestionsForQuiz(
             @RequestParam String categoryName,@RequestParam Integer numberOfQuestions
     )
     {
+
        return questionService.getQuestionsForQuiz(categoryName,numberOfQuestions);
     }
 
     // we want a endpoint for return the questions for the quiz without right answer if the quiz service
     // given the ids then we can return the questions as per the id's
     @PostMapping("/getQuestionsById")
-    public ResponseEntity< List<QuestionWrapper> > getQuestionsById(
+    public  List<QuestionWrapper>  getQuestionsById(
             @RequestBody List<Integer> questionsIds
     ){
+
         return questionService.getQuestionsById(questionsIds);
     }
 

@@ -2,6 +2,7 @@ package com.ajith.quizservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
 
 import java.util.List;
 

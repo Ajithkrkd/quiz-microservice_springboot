@@ -4,16 +4,20 @@ import com.ajith.questionservice.Services.QuestionService;
 import com.ajith.questionservice.model.Question;
 import com.ajith.questionservice.model.QuestionWrapper;
 import com.ajith.questionservice.model.Response;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private QuestionDao questionDao;
@@ -46,9 +50,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public ResponseEntity < List < QuestionWrapper > > getQuestionsById (List < Integer > questionsIds) {
+    @Transactional(readOnly = true)
+    @SneakyThrows
+    public  List < QuestionWrapper > getQuestionsById (List < Integer > questionsIds) {
         List<QuestionWrapper>  wrappers = new ArrayList ();
-
+        log.info ( "waiting START------------------" );
+        Thread.sleep( 10000 );
+        log.info ( "waiting END----------------------" );
         for(int id : questionsIds)
         {
             Optional < Question > question = questionDao.findById ( id );
@@ -67,7 +75,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         }
 
-        return new ResponseEntity <> ( wrappers, HttpStatus.OK );
+        return  wrappers;
     }
 
     @Override

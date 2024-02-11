@@ -21,4 +21,14 @@ public class GlobalExceptionHandler {
                 .status ( HttpStatus.FORBIDDEN.value ( ) )
                 .build ());
     }
+    @ExceptionHandler(value = {TokenInvalidException.class})
+    public ResponseEntity<ErrorMessage>tokenInvalid(TokenInvalidException ex)
+    {
+        return ResponseEntity.status ( HttpStatus.FORBIDDEN ).body (ErrorMessage.builder ()
+                .message ( ex.getMessage ())
+                .description ( "token expired please login to get new token" )
+                .timestamp ( LocalDateTime.now () )
+                .status ( HttpStatus.FORBIDDEN.value ( ) )
+                .build ());
+    }
 }

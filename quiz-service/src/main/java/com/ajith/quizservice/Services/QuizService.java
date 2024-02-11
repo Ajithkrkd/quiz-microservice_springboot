@@ -5,14 +5,19 @@ import com.ajith.quizservice.feign.QuizInterface;
 import com.ajith.quizservice.model.QuestionWrapper;
 import com.ajith.quizservice.model.Quiz;
 import com.ajith.quizservice.model.Response;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class QuizService {
@@ -37,19 +42,21 @@ public class QuizService {
 
     }
 
-    public ResponseEntity<List< QuestionWrapper >> getQuizQuestions(Integer id) {
+
+    @Transactional(readOnly = true)
+    public List< QuestionWrapper >getQuizQuestions(Integer id) {
 
         Optional<Quiz> optionalQuiz = quizDao.findById ( id );
         if ( optionalQuiz.isPresent() )
         {
             Quiz quiz = optionalQuiz.get();
             List<Integer> questionIds = quiz.getQuestionsIds ();
-            List<QuestionWrapper> questionWrappers = quizInterface.getQuestionsById ( questionIds ).getBody ();
-        return new ResponseEntity<>(questionWrappers, HttpStatus.OK);
+
+            return quizInterface.getQuestionsById(questionIds).getBody();
 
         }
         else {
-            return new ResponseEntity<>(new ArrayList <> (  ),HttpStatus.BAD_REQUEST);
+            return new ArrayList <> (  );
         }
 
 

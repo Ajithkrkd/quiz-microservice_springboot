@@ -2,6 +2,7 @@ package com.ajith.apigateway.filter;
 
 
 import com.ajith.apigateway.exceptions.AuthHeaderNotFountException;
+import com.ajith.apigateway.exceptions.TokenInvalidException;
 import com.ajith.apigateway.jwtUtils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -33,8 +34,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 {
                         throw new AuthHeaderNotFountException ( "missing authorization header" );
                 }
-                } catch (AuthHeaderNotFountException e) {
-                    throw new RuntimeException ( e );
+                } catch (RuntimeException e) {
+                    throw new AuthHeaderNotFountException ( "auth header is not fount please provide token" );
                 }
 
                     String authHeader = exchange.getRequest ().getHeaders ().get ( HttpHeaders.AUTHORIZATION ).get ( 0 );
@@ -47,7 +48,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
                 catch (Exception e)
                 {
-                    throw new RuntimeException("token invalid");
+                    throw new TokenInvalidException ("token invalid or expired");
                 }
             }
             return chain.filter ( exchange );
