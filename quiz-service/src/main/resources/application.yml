@@ -50,6 +50,11 @@ resilience4j:
       quizService:
         timeoutDuration: 3s
 
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
   ## zipkin configuration
 
   zipkin:
@@ -59,12 +64,4 @@ resilience4j:
     sampling:
       probability: 1.0
 
-#kafka properties
-  kafka:
-    bootstrap-servers: localhost:9092
-    template:
-      defaultTopic: "notificationTopic"
 
-    producer:
-      keySerializer: org.apache.kafka.common.serialization.StringSerializer
-      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer

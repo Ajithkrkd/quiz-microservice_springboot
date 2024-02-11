@@ -3,6 +3,7 @@ package com.ajith.quizservice.Services;
 import com.ajith.quizservice.Dao.QuizDao;
 import com.ajith.quizservice.event.QuizSubmitEvent;
 import com.ajith.quizservice.feign.QuizInterface;
+import com.ajith.quizservice.kafka.KafkaJsonProducer;
 import com.ajith.quizservice.model.QuestionWrapper;
 import com.ajith.quizservice.model.Quiz;
 import com.ajith.quizservice.model.Response;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class QuizService {
 
     private final QuizDao quizDao;
     private final QuizInterface quizInterface;
+    private final KafkaJsonProducer producer;
     private final KafkaTemplate<String,QuizSubmitEvent> kafkaTemplate;
 
     public ResponseEntity <String> createQuiz(String category,  String title,int numQ) {
@@ -66,7 +69,10 @@ public class QuizService {
 
     public ResponseEntity<Integer> calculateResult(Integer id, List< Response > responses) {
         int right = quizInterface.getScore ( responses ).getBody ();
-        kafkaTemplate.send ( "notificationTopic" , new QuizSubmitEvent(right) );
+        QuizSubmitEvent event = new QuizSubmitEvent();
+        event.setQuiz_id ( id );
+        event.setScore ( right );
+        producer.sendMessage ( event );
         return new ResponseEntity<>(right, HttpStatus.OK);
     }
 

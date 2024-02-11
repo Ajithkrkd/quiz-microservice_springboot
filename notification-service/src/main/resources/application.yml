@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: notification-service
+server:
+  port: 8000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+## zipkin configuration
+  zipkin:
+    baseUrl: http://localhost:9411
+  tracing:
+    sampling:
+      probability: 1.0
+
+### kafka configuration
+#  kafka:
+#    consumer:
+#      properties:
+#        spring.json.trusted.packages: "*"
+#      bootstrap-servers: localhost:9092
+#      group-id: notificationGroup
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
