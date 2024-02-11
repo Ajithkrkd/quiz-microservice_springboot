@@ -1,0 +1,31 @@
+server:
+  port: 8484
+spring:
+  application:
+    name: identity-service
+  datasource:
+    url: jdbc:mysql://localhost:3309/identity_service
+    username: root
+    password: password#2#2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+
+  ##jwt utilities
+application:
+  security:
+    jwt:
+      secret-key: "ebPOOal7zbI/R9kr7ueSpDOPLwGAHvgJ3CSZgAby7la72GQJAB86YH1tHBJ31Ofs"
+      expiration: 86400000
+
+  ## zipkin configuration
+  zipkin:
+    baseUrl: http://localhost:9411
+management:
+  tracing:
+    sampling:
+      probability: 1.0

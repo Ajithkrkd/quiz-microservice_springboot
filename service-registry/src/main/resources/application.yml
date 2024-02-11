@@ -1,0 +1,20 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: service-registry
+
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+
+  zipkin:
+    baseUrl: http://localhost:9411
+management:
+  tracing:
+    sampling:
+      probability: 1.0

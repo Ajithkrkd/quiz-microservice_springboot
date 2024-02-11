@@ -50,5 +50,11 @@ resilience4j:
       quizService:
         timeoutDuration: 3s
 
+  ## zipkin configuration
 
+  zipkin:
+    baseUrl: http://localhost:9411
 
+  tracing:
+    sampling:
+      probability: 1.0
