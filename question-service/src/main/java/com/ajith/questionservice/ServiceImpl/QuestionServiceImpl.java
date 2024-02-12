@@ -54,9 +54,9 @@ public class QuestionServiceImpl implements QuestionService {
     @SneakyThrows
     public  List < QuestionWrapper > getQuestionsById (List < Integer > questionsIds) {
         List<QuestionWrapper>  wrappers = new ArrayList ();
-        log.info ( "waiting START------------------" );
-        Thread.sleep( 10000 );
-        log.info ( "waiting END----------------------" );
+//        log.info ( "waiting START------------------" );
+//        Thread.sleep( 10000 );
+//        log.info ( "waiting END----------------------" );
         for(int id : questionsIds)
         {
             Optional < Question > question = questionDao.findById ( id );
