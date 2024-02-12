@@ -48,7 +48,7 @@ resilience4j:
   timelimiter:
     instances:
       quizService:
-        timeoutDuration: 3s
+        timeoutDuration: 10s
 
 
 eureka:

@@ -1,6 +1,184 @@
 ---
 version: '3'
 services:
+##postgres  quiz service
+  postgres-quiz:
+    container_name: postgres-quiz
+    image: postgres
+    environment:
+      POSTGRES_DB:  quiz_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password#2#2
+      PGDATA: /data/postgres
+    ports:
+        - "5433:5432"
+    volumes:
+      - ./postgres-quiz-service:/data/postgres
+    restart: unless-stopped
+
+##postgres  question service
+  postgres-question:
+    container_name: postgres-question
+    image: postgres
+    environment:
+      POSTGRES_DB:  question_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password#2#2
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-question-service:/data/postgres
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+
+## mysql identity service
+  mysql-identity:
+    container_name: mysql-identity
+    image: mysql
+    ports:
+      - 3330:3306
+    environment:
+      DATABASE_HOST: docker-mysql
+      DATABASE_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: identity_service
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: root
+    volumes:
+      - ./mysql-identity:/var/lib/mysql
+    restart: unless-stopped
+
+## Zipkin
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+
+
+
+  ## Eureka server
+  service-registry:
+    image: ajithkrkd/service-registry:2024quiz
+    container_name: service-registry
+    pull_policy: always
+    ports:
+      - 8761:8761
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - zipkin
+
+## Apigateway
+
+  api-gateway:
+    image: ajithkrkd/api-gatway:2024quiz
+    container_name: api-gateway
+    ports:
+      - "8765:8765"
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411
+    depends_on:
+      - zipkin
+      - service-registry
+
+## quiz service
+
+  quiz-service:
+    container_name: quiz-service
+    image: ajithkrkd/quiz-service:2024quiz
+    ports:
+      - "8081:8081"
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-quiz:5432/quiz_service
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password#2#2
+    depends_on:
+      - postgres-quiz
+      - broker
+      - zipkin
+      - service-registry
+      - api-gateway
+
+  ## question service
+
+  question-service:
+    container_name: question-service
+    image: ajithkrkd/question-service:2024quiz
+    ports:
+      - "8082:8082"
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-question:5432/question_service
+    depends_on:
+      - postgres-question
+      - service-registry
+      - api-gateway
+
+ ## notification service
+
+  notification-service:
+    container_name: notification-service
+    image: ajithkrkd/notification-service:2024quiz
+    ports:
+      - "8000:8000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - zipkin
+      - service-registry
+      - api-gateway
+      - broker
+
+
+  identity-service:
+    container_name: identity-service
+    image: ajithkrkd/identity-service:2024quiz
+    ports:
+      - "8484:8484"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-identity:3306/identity_service?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - mysql-identity
+      - service-registry
+      - api-gateway
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     container_name: zookeeper

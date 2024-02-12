@@ -3,7 +3,12 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+mysql-identity/auto.cnf'
+mysql-identity/binlog.index
+mysql-identity/ib_buffer_pool
+mysql-identity/mysql.sock'
+/mysql-identity/*
+mysql-identity
 ### STS ###
 .apt_generated
 .classpath
