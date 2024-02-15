@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
 
 ## Zipkin
-  zipkin:
+  zipkin-server:
     image: openzipkin/zipkin
     container_name: zipkin
     ports:
@@ -67,20 +67,21 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - zipkin
+      - zipkin-server
 
 ## Apigateway
 
   api-gateway:
     image: ajithkrkd/api-gatway:2024quiz
     container_name: api-gateway
+    pull_policy: always
     ports:
       - "8765:8765"
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
-      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
     depends_on:
-      - zipkin
+      - zipkin-server
       - service-registry
 
 ## quiz service
@@ -88,18 +89,19 @@ services:
   quiz-service:
     container_name: quiz-service
     image: ajithkrkd/quiz-service:2024quiz
+    pull_policy: always
     ports:
       - "8081:8081"
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
-      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-quiz:5432/quiz_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password#2#2
     depends_on:
       - postgres-quiz
       - broker
-      - zipkin
+      - zipkin-server
       - service-registry
       - api-gateway
 
@@ -108,28 +110,31 @@ services:
   question-service:
     container_name: question-service
     image: ajithkrkd/question-service:2024quiz
+    pull_policy: always
     ports:
       - "8082:8082"
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
-      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-question:5432/question_service
     depends_on:
       - postgres-question
       - service-registry
       - api-gateway
+      - zipkin-server
 
  ## notification service
 
   notification-service:
     container_name: notification-service
     image: ajithkrkd/notification-service:2024quiz
+    pull_policy: always
     ports:
       - "8000:8000"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - zipkin
+      - zipkin-server
       - service-registry
       - api-gateway
       - broker
@@ -138,6 +143,7 @@ services:
   identity-service:
     container_name: identity-service
     image: ajithkrkd/identity-service:2024quiz
+    pull_policy: always
     ports:
       - "8484:8484"
     environment:
@@ -146,10 +152,12 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
     depends_on:
       - mysql-identity
       - service-registry
       - api-gateway
+      - zipkin-server
 
 
 

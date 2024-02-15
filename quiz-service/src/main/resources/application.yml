@@ -1,4 +1,10 @@
 spring:
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   datasource:
     url: jdbc:postgresql://localhost:5432/quizDb
     username: postgres
@@ -64,4 +70,5 @@ eureka:
     sampling:
       probability: 1.0
 
+    ## kafka configuration
 

@@ -1,6 +1,31 @@
 spring:
   application:
     name: notification-service
+  ## sending mails using java mail sender
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: pedalplanetbicycles@gmail.com
+    password: lwuouxyjayzvvkcn
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          socketFactoryClass: javax.net.ssl.SSLSocketFactory
+
+  ## kafka configuration
+  kafka:
+    consumer:
+      properties:
+        spring.json.trusted.packages: "*"
+      bootstrap-servers: localhost:9092
+      group-id: notificationGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
 server:
   port: 8000
 
@@ -16,13 +41,4 @@ eureka:
     sampling:
       probability: 1.0
 
-### kafka configuration
-#  kafka:
-#    consumer:
-#      properties:
-#        spring.json.trusted.packages: "*"
-#      bootstrap-servers: localhost:9092
-#      group-id: notificationGroup
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,8 +71,11 @@ public class QuizService {
     public ResponseEntity<Integer> calculateResult(Integer id, List< Response > responses) {
         int right = quizInterface.getScore ( responses ).getBody ();
         QuizSubmitEvent event = new QuizSubmitEvent();
-        event.setQuiz_id ( id );
+        Quiz quiz = quizDao.findById( id ).orElseThrow ( );
+        event.setQuiz_name (quiz.getTitle ());
+        event.setTotal_question ( String.valueOf ( quiz.getQuestionsIds ().size () ) );
         event.setScore ( right );
+        event.setUserEmail ( "ajith2255iti@gmail.com" );
         producer.sendMessage ( event );
         return new ResponseEntity<>(right, HttpStatus.OK);
     }
