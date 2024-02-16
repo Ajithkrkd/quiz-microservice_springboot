@@ -16,11 +16,11 @@ public class KafkaJsonProducer {
 
     public void sendMessage(QuizSubmitEvent event) {
         try {
-            Message<QuizSubmitEvent> message = MessageBuilder
+            Message <QuizSubmitEvent> message = MessageBuilder
                     .withPayload(event)
-                    .setHeader(KafkaHeaders.TOPIC, "notificationTopic")
+                    .setHeader(KafkaHeaders.TOPIC,"notificationTopic")
                     .build();
-            kafkaTemplate.send(message);
+            kafkaTemplate.send ( message );
             log.info("Message sent successfully to Kafka topic 'notificationTopic'");
         } catch (Exception e) {
             log.error("Error occurred while sending message to Kafka: {}", e.getMessage(), e);

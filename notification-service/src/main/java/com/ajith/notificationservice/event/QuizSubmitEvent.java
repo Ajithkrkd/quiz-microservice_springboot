@@ -8,7 +8,9 @@ import lombok.ToString;
 @Setter
 @ToString
 public class QuizSubmitEvent {
-    private int quiz_id;
+    private String quiz_name;
+    private String total_question;
     private int score;
+    private String userEmail;
 }
 
