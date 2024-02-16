@@ -65,7 +65,7 @@ services:
     ports:
       - 8761:8761
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING.PROFILES.ACTIVE: docker
     depends_on:
       - zipkin-server
 
@@ -79,7 +79,7 @@ services:
       - "8765:8765"
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
-      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/
     depends_on:
       - zipkin-server
       - service-registry
@@ -94,10 +94,11 @@ services:
       - "8081:8081"
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
-      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-quiz:5432/quiz_service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password#2#2
+      SPRING_PROFILES_ACTIVE: docker
     depends_on:
       - postgres-quiz
       - broker
@@ -115,7 +116,7 @@ services:
       - "8082:8082"
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
-      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-question:5432/question_service
     depends_on:
       - postgres-question
@@ -132,7 +133,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
     depends_on:
       - zipkin-server
       - service-registry
@@ -160,32 +161,7 @@ services:
       - zipkin-server
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## zookeeper and kafka
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1

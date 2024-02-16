@@ -16,7 +16,7 @@ public class KafkaJsonProducer {
 
     public void sendMessage(QuizSubmitEvent event) {
         try {
-            Message<QuizSubmitEvent> message = MessageBuilder
+            Message <QuizSubmitEvent> message = MessageBuilder
                     .withPayload(event)
                     .setHeader(KafkaHeaders.TOPIC,"notificationTopic")
                     .build();

@@ -24,9 +24,9 @@ public class MailService {
         helper.setSubject (" Your quiz result is here!" );
         String content = "<html><body style='font-family: Arial, sans-serif;'>"
                 + "<h2 style='color: #007bff;'>"+"Quiz name : "+ event.getQuiz_name ()+"</h2>"
-                + "<h5>Hello,</h5>"
-                + "<h6>You have attempted very well </h6>"
-                + "<h3> You scored"+ event.getScore () + "out of " +event.getTotal_question ()+"</h3>"
+                + "<h3>Hello,</h3>"
+                + "<4>You have attempted very well </h4>"
+                + "<h3> You scored    "+ event.getScore () + "   out of   " +event.getTotal_question ()+"</h3>"
                 + "<p>Appreciate your participation try another quiz All the best:</p>"
                 + "</body></html>";
 
